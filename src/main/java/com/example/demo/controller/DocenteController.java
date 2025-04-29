@@ -2,30 +2,33 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Docente;
 import com.example.demo.service.DocenteService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Controller
 @RequestMapping("/docenti")
 public class DocenteController {
 
-    private final DocenteService service;
-
-    public DocenteController(DocenteService service) {
-        this.service = service;
-    }
+    @Autowired
+    DocenteService docenteService;
 
     // LISTA
-    @GetMapping
+    @GetMapping("/lista")
     public String list(Model model) {
-        model.addAttribute("docenti", service.findAll());
+        List<Docente> docenti = new ArrayList<>();
+        docenti = docenteService.findAll();
+        model.addAttribute("docenti", docenti);
         return "list-docenti";
     }
 
     // FORM NUOVO
-    @GetMapping("/new")
+    @GetMapping("/nuovo")
     public String showAdd(Model model) {
         model.addAttribute("docente", new Docente());
         return "form-docente";
@@ -36,14 +39,14 @@ public class DocenteController {
     public String create(@ModelAttribute("docente") Docente docente,
                          BindingResult br) {
         if (br.hasErrors()) return "form-docente";
-        service.save(docente);
+        docenteService.save(docente);
         return "redirect:/docenti";
     }
 
     // FORM EDIT
     @GetMapping("/{id}/edit")
     public String showEdit(@PathVariable Long id, Model model) {
-        model.addAttribute("docente", service.get(id));
+        model.addAttribute("docente", docenteService.get(id));
         return "form-docente";
     }
 
@@ -54,14 +57,14 @@ public class DocenteController {
                          BindingResult br) {
         if (br.hasErrors()) return "form-docente";
         docente.setId(id);
-        service.save(docente);
+        docenteService.save(docente);
         return "redirect:/docenti";
     }
 
     // DELETE
     @GetMapping("/{id}/delete")
     public String delete(@PathVariable Long id) {
-        service.delete(id);
+        docenteService.delete(id);
         return "redirect:/docenti";
     }
 
