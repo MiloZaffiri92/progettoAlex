@@ -1,4 +1,4 @@
-<%@ taglib uri="https://jakarta.ee/tags/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %><!DOCTYPE html>
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,7 +9,7 @@
 <body class="container mt-4">
 <h1>Elenco Docenti</h1>
 
-<a class="btn btn-primary mb-3" href="<c:url value='/docenti/new'/>">Nuovo Docente</a>
+<a class="btn btn-primary mb-3" href="<c:url value='/docenti/nuovo'/>">Nuovo Docente</a>
 
 <table class="table table-striped">
     <thead>

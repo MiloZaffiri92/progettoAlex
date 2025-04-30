@@ -40,7 +40,7 @@ public class DocenteController {
                          BindingResult br) {
         if (br.hasErrors()) return "form-docente";
         docenteService.save(docente);
-        return "redirect:/docenti";
+        return "redirect:/docenti/lista";
     }
 
     // FORM EDIT
@@ -58,14 +58,14 @@ public class DocenteController {
         if (br.hasErrors()) return "form-docente";
         docente.setId(id);
         docenteService.save(docente);
-        return "redirect:/docenti";
+        return "redirect:/docenti/lista";
     }
 
     // DELETE
     @GetMapping("/{id}/delete")
     public String delete(@PathVariable Long id) {
         docenteService.delete(id);
-        return "redirect:/docenti";
+        return "redirect:/docenti/lista";
     }
 
 
