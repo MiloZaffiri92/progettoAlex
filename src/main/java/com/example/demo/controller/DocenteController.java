@@ -67,13 +67,5 @@ public class DocenteController {
         docenteService.delete(id);
         return "redirect:/docenti/lista";
     }
-
-
-
-
-
-
-
-
 }
 
