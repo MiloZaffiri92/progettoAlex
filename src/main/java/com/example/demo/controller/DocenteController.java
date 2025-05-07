@@ -67,5 +67,14 @@ public class DocenteController {
         docenteService.delete(id);
         return "redirect:/docenti/lista";
     }
+
+
+    @GetMapping("/perNome")
+    public String cercaPerNome(@RequestParam("nome") String nome, Model model) {
+        List<Docente> docenti = docenteService.findByNome(nome);
+        model.addAttribute("docenti", docenti);
+        return "list-docenti";
+    }
+
 }
 

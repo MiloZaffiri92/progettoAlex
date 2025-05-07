@@ -9,6 +9,14 @@
 <body class="container mt-4">
 <h1>Elenco Docenti</h1>
 
+<!-- Form di ricerca -->
+<form class="mb-3" action="<c:url value='/docenti/perNome'/>" method="get">
+    <div class="input-group">
+        <input type="text" name="nome" class="form-control" placeholder="Cerca per nome">
+        <button class="btn btn-outline-primary" type="submit">Cerca</button>
+    </div>
+</form>
+
 <a class="btn btn-primary mb-3" href="<c:url value='/docenti/nuovo'/>">Nuovo Docente</a>
 
 <table class="table table-striped">
