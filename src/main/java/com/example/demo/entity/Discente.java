@@ -28,6 +28,6 @@ public class Discente {
     @Column(name = "eta")
     private Integer eta;
 
-    @Column(name ="citta_residenza")
+    @Column(name = "citta_residenza")
     private String cittaResidenza;
 }
