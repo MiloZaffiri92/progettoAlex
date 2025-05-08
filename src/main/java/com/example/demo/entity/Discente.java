@@ -30,4 +30,8 @@ public class Discente {
 
     @Column(name = "citta_residenza")
     private String cittaResidenza;
+
+    public String getNomeCompleto() {
+        return this.nome + " " + this.cognome;
+    }
 }

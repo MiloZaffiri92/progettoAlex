@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import ch.qos.logback.core.model.Model;
 import com.example.demo.entity.Discente;
 import com.example.demo.service.DiscenteService;
+import lombok.ToString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;

@@ -25,6 +25,10 @@ public class Docente {
     @Column(nullable = false, unique = true)
     private String email;
 
+    public String getNomeCompleto() {
+        return this.nome + " " + this.cognome;
+    }
+
 
 
 

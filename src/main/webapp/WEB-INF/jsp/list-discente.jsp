@@ -7,6 +7,26 @@
           href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"/>
 </head>
 <body class="container mt-4">
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Gestione Discenti</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="<c:url value='/corsi/list'/>">Corsi</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<c:url value='/discenti/lista'/>">Discenti</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<c:url value='/docenti/lista'/>">Docenti</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
 <h1>Elenco Discenti</h1>
 
 <a class="btn btn-primary mb-3" href="<c:url value='/discenti/nuovo'/>">Nuovo Discente</a>
