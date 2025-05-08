@@ -38,7 +38,7 @@
     <label>Discenti:</label>
     <c:forEach var="discente" items="${discentiList}">
         <div class="form-check">
-            <form:checkbox path="discenti" value="${discente.id}" cssClass="form-check-input"/>
+            <form:checkbox path="discenti" value="${discente}" cssClass="form-check-input"/>
             <label class="form-check-label">${discente.nomeCompleto}</label>
         </div>
     </c:forEach>
