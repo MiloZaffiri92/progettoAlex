@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -24,7 +26,7 @@ public class Corso {
     @Column(name = "anno_accademico")
     private String annoAccademico;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "docente_id")
     private Docente docente;
 
@@ -35,4 +37,6 @@ public class Corso {
             inverseJoinColumns = @JoinColumn(name = "discente_id")
     )
     private List<Discente> discenti;
+
+
 }

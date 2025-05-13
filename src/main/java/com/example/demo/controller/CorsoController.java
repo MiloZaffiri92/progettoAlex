@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Corso;
-import com.example.demo.entity.Discente;
 import com.example.demo.service.CorsoService;
 import com.example.demo.service.DiscenteService;
 import com.example.demo.service.DocenteService;
@@ -42,7 +41,7 @@ public class CorsoController {
         model.addAttribute("corso", new Corso());
         model.addAttribute("docentiList", docenteService.findAll());
         model.addAttribute("discentiList", discenteService.findAll());
-        return "form-corso"; // jsp per creazione
+        return "form-corso";
     }
 
     @PostMapping
@@ -54,12 +53,6 @@ public class CorsoController {
     @GetMapping("/{id}/edit")
     public String modificaCorso(@PathVariable Long id, Model model) {
         Corso corso = corsoService.findById(id).orElseThrow();
-        corso.getDiscenti().size();
-
-
-
-
-
         model.addAttribute("corso", corso);
         model.addAttribute("docentiList", docenteService.findAll());
         model.addAttribute("discentiList", discenteService.findAll());

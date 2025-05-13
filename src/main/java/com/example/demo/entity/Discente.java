@@ -4,7 +4,10 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Data
@@ -12,6 +15,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "discenti")
+@ToString(exclude = "corsi")
 public class Discente {
 
     @Id
@@ -32,6 +36,9 @@ public class Discente {
 
     @Column(name = "citta_residenza")
     private String cittaResidenza;
+
+    @ManyToMany(mappedBy = "discenti")
+    private List<Corso> corsi;
 
     public String getNomeCompleto() {
         return this.nome + " " + this.cognome;
