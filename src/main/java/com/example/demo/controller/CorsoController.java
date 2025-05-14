@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.Corso;
+import com.example.demo.data.entity.Corso;
 import com.example.demo.service.CorsoService;
 import com.example.demo.service.DiscenteService;
 import com.example.demo.service.DocenteService;

@@ -1,9 +1,8 @@
 package com.example.demo.controller;
 
-import ch.qos.logback.core.model.Model;
-import com.example.demo.entity.Discente;
+import com.example.demo.data.dto.DiscenteDTO;
+import com.example.demo.data.entity.Discente;
 import com.example.demo.service.DiscenteService;
-import lombok.ToString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -19,7 +18,7 @@ public class DiscenteController {
 
     @GetMapping("/lista")
     public ModelAndView list() {
-        List<Discente> discenti = discenteService.findAll();
+        List<DiscenteDTO> discenti = discenteService.findAll();
         ModelAndView mav = new ModelAndView("list-discente");
         mav.addObject("discente", discenti);
         return mav;
@@ -37,7 +36,7 @@ public class DiscenteController {
 
     //Salva nuovo
     @PostMapping
-    public String create(@ModelAttribute("discente") Discente discente,
+    public String create(@ModelAttribute("discente") DiscenteDTO discente,
                          BindingResult br) {
         if (br.hasErrors()) return "form-discente";
         discenteService.save(discente);
@@ -56,7 +55,7 @@ public class DiscenteController {
     // AGGIORNA
     @PostMapping("/{id}")
     public String update(@PathVariable Long id,
-                         @ModelAttribute("discente") Discente discente,
+                         @ModelAttribute("discente") DiscenteDTO discente,
                          BindingResult br) {
         if (br.hasErrors()) return "form-discente";
         discente.setId(id);
@@ -74,7 +73,7 @@ public class DiscenteController {
     // Usa ModelAndView per la ricerca dei discenti per città (QUERY PERSONALIZZATA)
     @GetMapping("/perCitta")
     public ModelAndView findByCitta(@RequestParam(required = false) String citta) {
-        List<Discente> risultatiRicerca;
+        List<DiscenteDTO> risultatiRicerca;
         if (citta != null && !citta.isEmpty()) {
             risultatiRicerca = discenteService.findByCitta(citta); // Esegui la query personalizzata
         } else {

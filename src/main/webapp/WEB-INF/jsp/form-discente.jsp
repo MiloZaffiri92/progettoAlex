@@ -66,10 +66,6 @@
             <form:input path="matricola" id="matricola" required="true"/>
         </div>
         <div>
-            <label for="eta">Eta:</label>
-            <form:input path="eta" id="eta" required="true"/>
-        </div>
-        <div>
             <label for="cittaResidenza">Citta di Residenza:</label>
             <form:input path="cittaResidenza" id="cittaResidenza" required="true"/>
         </div>

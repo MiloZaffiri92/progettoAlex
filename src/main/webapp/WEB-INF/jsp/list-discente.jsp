@@ -44,7 +44,6 @@
         <th>Nome</th>
         <th>Cognome</th>
         <th>Matricola</th>
-        <th>Eta</th>
         <th>Citta di Residenza</th>
         <th>Azioni</th>
     </tr>
@@ -56,7 +55,6 @@
             <td>${d.nome}</td>
             <td>${d.cognome}</td>
             <td>${d.matricola}</td>
-            <td>${d.eta}</td>
             <td>${d.cittaResidenza}</td>
             <td>
                 <a class="btn btn-sm btn-secondary" href="<c:url value='/discenti/${d.id}/edit'/>">Modifica</a>

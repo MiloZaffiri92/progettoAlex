@@ -1,4 +1,4 @@
-package com.example.demo.entity;
+package com.example.demo.data.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -22,7 +22,7 @@ public class Docente {
     @Column(nullable = false)
     private String cognome;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String email;
 
     public String getNomeCompleto() {
@@ -30,6 +30,9 @@ public class Docente {
     }
 
 
+//    public String getNomeCompleto() {
+//        return this.nome + " " + this.cognome;
+//    }
 
 
 }

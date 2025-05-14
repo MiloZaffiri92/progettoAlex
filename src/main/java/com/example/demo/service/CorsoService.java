@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
-import com.example.demo.entity.Corso;
+import com.example.demo.data.dto.CorsoDTO;
+import com.example.demo.data.entity.Corso;
 import com.example.demo.repository.CorsoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

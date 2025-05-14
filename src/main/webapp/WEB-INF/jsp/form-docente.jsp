@@ -62,11 +62,6 @@
         </div>
 
         <div>
-            <label for="email">Email:</label>
-            <form:input path="email" id="email" type="email" required="true"/>
-        </div>
-
-        <div>
             <button type="submit">Salva</button>
         </div>
     </form:form>

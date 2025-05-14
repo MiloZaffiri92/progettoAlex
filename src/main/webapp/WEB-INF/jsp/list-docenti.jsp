@@ -43,7 +43,7 @@
 <table class="table table-striped">
     <thead>
     <tr>
-        <th>ID</th><th>Nome</th><th>Cognome</th><th>Email</th><th>Azioni</th>
+        <th>ID</th><th>Nome</th><th>Cognome</th><th>Azioni</th>
     </tr>
     </thead>
     <tbody>
@@ -52,7 +52,6 @@
             <td>${d.id}</td>
             <td>${d.nome}</td>
             <td>${d.cognome}</td>
-            <td>${d.email}</td>
             <td>
                 <a class="btn btn-sm btn-secondary" href="<c:url value='/docenti/${d.id}/edit'/>">Modifica</a>
                 <a class="btn btn-sm btn-danger"

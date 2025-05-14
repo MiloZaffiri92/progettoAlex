@@ -1,52 +1,65 @@
 package com.example.demo.service;
 
-import com.example.demo.entity.Corso;
-import com.example.demo.entity.Docente;
+import com.example.demo.converter.Converter;
+import com.example.demo.data.dto.DocenteDTO;
+import com.example.demo.data.entity.Corso;
+import com.example.demo.data.entity.Docente;
 import com.example.demo.repository.CorsoRepository;
 import com.example.demo.repository.DocenteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DocenteService {
 
     @Autowired
-    CorsoRepository corsoRepository;
+    private CorsoRepository corsoRepository;
 
     @Autowired
-    DocenteRepository docenteRepository;
+    private DocenteRepository docenteRepository;
 
-    public List<Docente> findAll() {
-        return docenteRepository.findAll();
+    // Restituisce tutti i docenti come DTO
+    public List<DocenteDTO> findAll() {
+        return docenteRepository.findAll().stream()
+                .map(Converter::toDto)
+                .collect(Collectors.toList());
     }
 
-    public Docente get(Long id) {
-        return docenteRepository.findById(id).orElseThrow();
+    // Restituisce un singolo docente come DTO
+    public DocenteDTO get(Long id) {
+        Docente docente = docenteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Docente non trovato"));
+        return Converter.toDto(docente);
     }
 
-    public Docente save(Docente d) {
-        return docenteRepository.save(d);
+    // Salva un docente a partire dal DTO
+    public DocenteDTO save(DocenteDTO dto) {
+        Docente docente = Converter.toEntity(dto);
+        Docente saved = docenteRepository.save(docente);
+        return Converter.toDto(saved);
     }
 
+    // Elimina un docente e scollega i corsi
     public void delete(Long id) {
         Docente docente = docenteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Docente non trovato"));
 
-        // Scollega i corsi che fanno riferimento al docente
         List<Corso> corsi = corsoRepository.findByDocente(docente);
         for (Corso corso : corsi) {
             corso.setDocente(null);
             corsoRepository.save(corso);
         }
 
-        // Ora elimina il docente
         docenteRepository.delete(docente);
     }
 
-
-    public List<Docente> findByNome(String nome) {
-        return docenteRepository.cercaPerNome(nome);
+    // Cerca docenti per nome (parziale o completo)
+    public List<DocenteDTO> findByNome(String nome) {
+        return docenteRepository.cercaPerNome(nome).stream()
+                .map(Converter::toDto)
+                .collect(Collectors.toList());
     }
 }
