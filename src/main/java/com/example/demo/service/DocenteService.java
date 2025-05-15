@@ -1,6 +1,5 @@
 package com.example.demo.service;
-
-import com.example.demo.converter.Converter;
+import com.example.demo.converter.DocenteConverterModelMapper;
 import com.example.demo.data.dto.DocenteDTO;
 import com.example.demo.data.entity.Corso;
 import com.example.demo.data.entity.Docente;
@@ -8,12 +7,14 @@ import com.example.demo.repository.CorsoRepository;
 import com.example.demo.repository.DocenteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class DocenteService {
+
+    @Autowired
+    private DocenteConverterModelMapper docenteConverterModelMapper;
 
     @Autowired
     private CorsoRepository corsoRepository;
@@ -24,7 +25,7 @@ public class DocenteService {
     // Restituisce tutti i docenti come DTO
     public List<DocenteDTO> findAll() {
         return docenteRepository.findAll().stream()
-                .map(Converter::toDto)
+                .map(docente -> docenteConverterModelMapper.toDto(docente))
                 .collect(Collectors.toList());
     }
 
@@ -32,14 +33,14 @@ public class DocenteService {
     public DocenteDTO get(Long id) {
         Docente docente = docenteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Docente non trovato"));
-        return Converter.toDto(docente);
+        return docenteConverterModelMapper.toDto(docente);
     }
 
     // Salva un docente a partire dal DTO
     public DocenteDTO save(DocenteDTO dto) {
-        Docente docente = Converter.toEntity(dto);
+        Docente docente = docenteConverterModelMapper.toEntity(dto);
         Docente saved = docenteRepository.save(docente);
-        return Converter.toDto(saved);
+        return docenteConverterModelMapper.toDto(saved);
     }
 
     // Elimina un docente e scollega i corsi
@@ -59,7 +60,7 @@ public class DocenteService {
     // Cerca docenti per nome (parziale o completo)
     public List<DocenteDTO> findByNome(String nome) {
         return docenteRepository.cercaPerNome(nome).stream()
-                .map(Converter::toDto)
+                .map(docente -> docenteConverterModelMapper.toDto(docente))
                 .collect(Collectors.toList());
     }
 }

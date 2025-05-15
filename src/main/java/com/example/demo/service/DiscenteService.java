@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.converter.DiscenteConverter;
 import com.example.demo.converter.DiscenteMapper;
+import com.example.demo.converter.DiscenteModelMapperConverter;
 import com.example.demo.data.dto.DiscenteDTO;
 import com.example.demo.data.entity.Corso;
 import com.example.demo.data.entity.Discente;
@@ -12,8 +13,6 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,13 +24,13 @@ public class DiscenteService {
     @Autowired
     private CorsoRepository corsoRepository;
     @Autowired
-    private DiscenteMapper discenteMapper;
+    private DiscenteModelMapperConverter discenteModelMapperConverter;
 
 
 
     public List<DiscenteDTO> findAll() {
         List<DiscenteDTO> discenti = discenteRepository.findAll().stream()
-                .map(discenteMapper::toDto)
+                .map(discente -> discenteModelMapperConverter.toDto(discente) )
                 .collect(Collectors.toList());
         System.out.println("Numero di discenti recuperati: " + discenti.size());  // Debug
         return discenti;
@@ -40,7 +39,7 @@ public class DiscenteService {
     public DiscenteDTO get(Long id) {
         Discente discente = discenteRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Discente non trovato con id: " + id));
-        return discenteMapper.toDto(discente);
+        return discenteModelMapperConverter.toDto(discente);
     }
 
     public DiscenteDTO save(DiscenteDTO d){
@@ -70,7 +69,7 @@ public class DiscenteService {
             throw new IllegalArgumentException("La città non può essere vuota");
         }
         return discenteRepository.findByCitta(citta).stream()
-                .map(discenteMapper::toDto)
+                .map(discente -> discenteModelMapperConverter.toDto(discente))
                 .collect(Collectors.toList());
     }
 }
