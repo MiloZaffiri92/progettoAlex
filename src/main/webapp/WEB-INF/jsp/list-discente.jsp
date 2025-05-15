@@ -49,7 +49,7 @@
     </tr>
     </thead>
     <tbody>
-    <c:forEach var="d" items="${discente}">
+    <c:forEach var="d" items="${discenti}">
         <tr>
             <td>${d.id}</td>
             <td>${d.nome}</td>
@@ -89,9 +89,7 @@
         </tbody>
     </table>
 </c:if>
+
 <c:if test="${empty risultatiCitta and param.citta != null}">
     <p>Nessun discente trovato per la citta di "${param.citta}".</p>
 </c:if>
-
-</body>
-</html>

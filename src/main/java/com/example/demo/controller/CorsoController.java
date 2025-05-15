@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.data.dto.CorsoDTO;
 import com.example.demo.data.entity.Corso;
 import com.example.demo.service.CorsoService;
 import com.example.demo.service.DiscenteService;
@@ -27,33 +28,30 @@ public class CorsoController {
     private DiscenteService discenteService;
 
     @GetMapping("/list")
-    public String listCorsi(@RequestParam(required = false) String nome, Model model) {
-        List<Corso> corsi = (nome != null && !nome.isEmpty())
-                ? corsoService.findByNome(nome)
-                : corsoService.findAll();
-
+    public String list(Model model) {
+        List<CorsoDTO> corsi = corsoService.findAll();
         model.addAttribute("corsi", corsi);
         return "list-corsi";
     }
 
     @GetMapping("/nuovo")
     public String nuovoCorsoForm(Model model) {
-        model.addAttribute("corso", new Corso());
-        model.addAttribute("docentiList", docenteService.findAll());
-        model.addAttribute("discentiList", discenteService.findAll());
+        model.addAttribute("corso", new CorsoDTO());
+        model.addAttribute("docentiList", docenteService.findAll()); // assicurati che restituisca DTO
+        model.addAttribute("discentiList", discenteService.findAll()); // idem
         return "form-corso";
     }
 
     @PostMapping
-    public String salvaCorso(@ModelAttribute Corso corso) {
-        corsoService.save(corso);
+    public String salvaCorso(@ModelAttribute CorsoDTO corsoDTO) {
+        corsoService.save(corsoDTO);
         return "redirect:/corsi/list";
     }
 
     @GetMapping("/{id}/edit")
     public String modificaCorso(@PathVariable Long id, Model model) {
-        Corso corso = corsoService.findById(id).orElseThrow();
-        model.addAttribute("corso", corso);
+        CorsoDTO corsoDTO = corsoService.findById(id);
+        model.addAttribute("corso", corsoDTO);
         model.addAttribute("docentiList", docenteService.findAll());
         model.addAttribute("discentiList", discenteService.findAll());
         return "form-corso";
@@ -62,7 +60,6 @@ public class CorsoController {
     @GetMapping("/{id}/delete")
     public String eliminaCorso(@PathVariable Long id) {
         corsoService.deleteById(id);
-        return "redirect:/corsi";
+        return "redirect:/corsi/list";
     }
-
 }

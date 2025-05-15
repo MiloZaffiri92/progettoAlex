@@ -14,76 +14,75 @@ import java.util.List;
 @RequestMapping("/discenti")
 public class DiscenteController {
     @Autowired
-    DiscenteService discenteService;
+    private DiscenteService discenteService;
 
+    // Visualizza la lista dei discenti
     @GetMapping("/lista")
     public ModelAndView list() {
         List<DiscenteDTO> discenti = discenteService.findAll();
+        System.out.println("Numero di discenti passati alla vista: " + discenti.size());  // Verifica che i discenti siano correttamente passati alla vista
         ModelAndView mav = new ModelAndView("list-discente");
-        mav.addObject("discente", discenti);
+        mav.addObject("discenti", discenti);  // Aggiungi i discenti al modello
         return mav;
     }
 
-//FORM NUOVO
+    // Form per aggiungere un nuovo Discente
     @GetMapping("/nuovo")
     public ModelAndView showAdd() {
         ModelAndView mav = new ModelAndView("form-discente");
-        mav.addObject("discente", new Discente());
+        mav.addObject("discente", new DiscenteDTO()); // Crea un nuovo DTO vuoto
         return mav;
     }
 
-
-
-    //Salva nuovo
+    // Salva il nuovo Discente
     @PostMapping
     public String create(@ModelAttribute("discente") DiscenteDTO discente,
                          BindingResult br) {
-        if (br.hasErrors()) return "form-discente";
-        discenteService.save(discente);
-        return "redirect:/discenti/lista";
+        if (br.hasErrors()) return "form-discente"; // Se ci sono errori nel form, torna alla pagina del form
+        discenteService.save(discente); // Salva il DTO
+        return "redirect:/discenti/lista"; // Redirect alla lista
     }
 
-    // FORM EDIT
+    // Form per modificare un Discente
     @GetMapping("/{id}/edit")
     public ModelAndView showEdit(@PathVariable Long id) {
         ModelAndView mav = new ModelAndView("form-discente");
-        mav.addObject("discente", discenteService.get(id));
+        mav.addObject("discente", discenteService.get(id)); // Ottieni il DTO tramite id
         return mav;
     }
 
-
-    // AGGIORNA
+    // Aggiorna un Discente esistente
     @PostMapping("/{id}")
     public String update(@PathVariable Long id,
                          @ModelAttribute("discente") DiscenteDTO discente,
                          BindingResult br) {
-        if (br.hasErrors()) return "form-discente";
-        discente.setId(id);
-        discenteService.save(discente);
-        return "redirect:/discenti/lista";
+        if (br.hasErrors()) return "form-discente"; // Se ci sono errori nel form, torna alla pagina del form
+        discente.setId(id); // Imposta l'id per l'aggiornamento
+        discenteService.save(discente); // Salva il DTO aggiornato
+        return "redirect:/discenti/lista"; // Redirect alla lista
     }
 
-    // DELETE
+    // Elimina un Discente
     @GetMapping("/{id}/delete")
     public String delete(@PathVariable Long id) {
-        discenteService.delete(id);
-        return "redirect:/discenti/lista";
+        discenteService.delete(id); // Elimina il discente con il dato id
+        return "redirect:/discenti/lista"; // Redirect alla lista
     }
 
-    // Usa ModelAndView per la ricerca dei discenti per città (QUERY PERSONALIZZATA)
+    // Ricerca discenti per città (Query personalizzata)
     @GetMapping("/perCitta")
     public ModelAndView findByCitta(@RequestParam(required = false) String citta) {
         List<DiscenteDTO> risultatiRicerca;
         if (citta != null && !citta.isEmpty()) {
             risultatiRicerca = discenteService.findByCitta(citta); // Esegui la query personalizzata
         } else {
-            risultatiRicerca = null; // O magari potresti ricaricare tutti i discenti qui, a seconda del comportamento desiderato
+            risultatiRicerca = discenteService.findAll(); // In caso di ricerca vuota, ricarica tutti i discenti
         }
 
-        // Restituisci la vista con i discenti trovati
+        // Restituisce la vista con i risultati della ricerca e la lista principale
         ModelAndView modelAndView = new ModelAndView("list-discente");
-        modelAndView.addObject("discente", discenteService.findAll()); // Ricarica tutti i discenti per la tabella principale
-        modelAndView.addObject("risultatiCitta", risultatiRicerca); // Aggiunge i risultati della ricerca con una chiave specifica
+        modelAndView.addObject("discenti", discenteService.findAll()); // Ricarica tutti i discenti per la tabella principale
+        modelAndView.addObject("risultatiCitta", risultatiRicerca); // Aggiungi i risultati della ricerca
         return modelAndView;
     }
 }

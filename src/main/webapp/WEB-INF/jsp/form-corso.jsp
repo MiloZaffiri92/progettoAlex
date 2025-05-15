@@ -26,8 +26,8 @@
      </div>
 
     <div class="mb-3">
-        <form:label path="docente.id">Docente:</form:label>
-        <form:select path="docente.id" cssClass="form-select">
+        <form:label path="docenteId">Docente:</form:label>
+        <form:select path="docenteId" cssClass="form-select">
             <form:option value="" label="-- Seleziona Docente --"/>
             <form:options items="${docentiList}" itemValue="id" itemLabel="nomeCompleto"/>
         </form:select>
@@ -38,7 +38,7 @@
     <label>Discenti:</label>
     <c:forEach var="discente" items="${discentiList}">
         <div class="form-check">
-            <form:checkbox path="discenti" value="${discente}" cssClass="form-check-input"/>
+            <form:checkbox path="discentiIds" value="${discente.id}" cssClass="form-check-input"/>
             <label class="form-check-label">${discente.nomeCompleto}</label>
         </div>
     </c:forEach>

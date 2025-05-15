@@ -34,35 +34,4 @@ public class Converter {
         return docente;
     }
 
-    public static DiscenteDTO discenteToDto(Discente discente) {
-
-        if (discente == null) return null;
-
-        return new DiscenteDTO(
-                discente.getId(),
-                discente.getNome(),
-                discente.getCognome(),
-                discente.getMatricola(),
-                discente.getCittaResidenza(),
-                discente.getCorsi()
-        );
-    }
-
-    public static Discente discenteToEntity(DiscenteDTO dto) {
-        if (dto == null) return null;
-
-        Discente discente = new Discente();
-        discente.setId(dto.getId());
-        discente.setNome(dto.getNome());
-        discente.setCognome(dto.getCognome());
-        discente.setMatricola(dto.getMatricola());
-        discente.setCittaResidenza(dto.getCittaResidenza());
-        discente.setCorsi(dto.getCorsi());
-        return discente;
-    }
-
-
-
-
-
 }

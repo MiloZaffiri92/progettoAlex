@@ -1,20 +1,19 @@
 package com.example.demo.data.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.List;
 import java.util.Objects;
 
-@Data
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "discenti")
 @ToString(exclude = "corsi")
+@Getter
+@Setter
 public class Discente {
 
     @Id
@@ -38,6 +37,14 @@ public class Discente {
 
     @ManyToMany(mappedBy = "discenti")
     private List<Corso> corsi;
+
+    public Discente(Long id, String nome, String cognome, Integer matricola, String cittaResidenza) {
+        this.id = id;
+        this.nome = nome;
+        this.cognome = cognome;
+        this.matricola = matricola;
+        this.cittaResidenza = cittaResidenza;
+    }
 
     public String getNomeCompleto() {
         return this.nome + " " + this.cognome;

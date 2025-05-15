@@ -1,13 +1,19 @@
 package com.example.demo.service;
-import com.example.demo.converter.Converter;
+
+import com.example.demo.converter.DiscenteConverter;
+import com.example.demo.converter.DiscenteMapper;
 import com.example.demo.data.dto.DiscenteDTO;
 import com.example.demo.data.entity.Corso;
 import com.example.demo.data.entity.Discente;
+
 import com.example.demo.repository.CorsoRepository;
 import com.example.demo.repository.DiscenteRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,59 +21,56 @@ import java.util.stream.Collectors;
 public class DiscenteService {
 
     @Autowired
-    DiscenteRepository discenteRepository;
+    private DiscenteRepository discenteRepository;
     @Autowired
-    CorsoRepository corsoRepository;
+    private CorsoRepository corsoRepository;
+    @Autowired
+    private DiscenteMapper discenteMapper;
 
-    // Restituisce tutti i discenti in formato DTO
+
+
     public List<DiscenteDTO> findAll() {
-        return discenteRepository.findAll().stream()
-                .map(Converter::discenteToDto)
+        List<DiscenteDTO> discenti = discenteRepository.findAll().stream()
+                .map(discenteMapper::toDto)
                 .collect(Collectors.toList());
+        System.out.println("Numero di discenti recuperati: " + discenti.size());  // Debug
+        return discenti;
     }
 
-    // Ottieni un discente specifico, restituendo un DTO
     public DiscenteDTO get(Long id) {
-        Discente discente = discenteRepository.findById(id).orElseThrow(() -> new RuntimeException("Discente non trovato"));
-        return Converter.discenteToDto(discente);
-    }
-
-    // Salva un discente, ricevendo un DTO e restituendo un DTO
-    public DiscenteDTO save(DiscenteDTO dto) {
-        Discente discente = Converter.discenteToEntity(dto);
-        Discente saved = discenteRepository.save(discente);
-        return Converter.discenteToDto(saved);
-    }
-
-    // Elimina un discente, dato un id
-    public void delete(Long id) {
-        // Trova il discente da eliminare
         Discente discente = discenteRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Discente non trovato"));
+                .orElseThrow(() -> new EntityNotFoundException("Discente non trovato con id: " + id));
+        return discenteMapper.toDto(discente);
+    }
 
-        // Trova tutti i corsi che contengono questo discente
+    public DiscenteDTO save(DiscenteDTO d){
+        Discente discente = DiscenteConverter.toEntity(d);
+        Discente savedDiscente=discenteRepository.save(discente);
+        return DiscenteConverter.toDTO(savedDiscente);
+    }
+
+
+    @Transactional
+    public void delete(Long id) {
+        Discente discente = discenteRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Discente non trovato con id: " + id));
+
         List<Corso> corsi = corsoRepository.findByDiscentiContaining(discente);
-
-        // Rimuove il discente da ciascun corso
         for (Corso corso : corsi) {
             corso.getDiscenti().remove(discente);
-            corsoRepository.save(corso); // Salva le modifiche al corso
+            corsoRepository.save(corso);
         }
 
-        // Ora puoi eliminare il discente
         discenteRepository.delete(discente);
     }
 
-    // Recupera i discenti in base alla città, restituendo DTO
     @Transactional
     public List<DiscenteDTO> findByCitta(String citta) {
-        if (citta == null || citta.isEmpty()) {
+        if (citta == null || citta.trim().isEmpty()) {
             throw new IllegalArgumentException("La città non può essere vuota");
         }
-        List<Discente> discenti = discenteRepository.findByCitta(citta);
-        return discenti.stream()
-                .map(Converter::discenteToDto)
+        return discenteRepository.findByCitta(citta).stream()
+                .map(discenteMapper::toDto)
                 .collect(Collectors.toList());
     }
-
 }

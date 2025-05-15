@@ -1,17 +1,13 @@
 package com.example.demo.data.dto;
-
-import com.example.demo.data.entity.Corso;
-import jakarta.persistence.Column;
-import jakarta.persistence.ManyToMany;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
+import java.util.ArrayList;
 import java.util.List;
 
-@Data
+
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class DiscenteDTO {
 
     private Long id;
@@ -19,5 +15,50 @@ public class DiscenteDTO {
     private String cognome;
     private Integer matricola;
     private String cittaResidenza;
-    private List<Corso> corsi;
+
+
+    public String getNomeCompleto() {
+        return this.nome + " " + this.cognome;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+
+    public String getCittaResidenza() {
+        return cittaResidenza;
+    }
+
+    public void setCittaResidenza(String cittaResidenza) {
+        this.cittaResidenza = cittaResidenza;
+    }
+
+    public Integer getMatricola() {
+        return matricola;
+    }
+
+    public void setMatricola(Integer matricola) {
+        this.matricola = matricola;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getCognome() {
+        return cognome;
+    }
+
+    public void setCognome(String cognome) {
+        this.cognome = cognome;
+    }
 }
