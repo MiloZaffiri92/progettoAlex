@@ -16,3 +16,4 @@ public interface CorsoMapper {
     @Mapping(target = "discenti", ignore = true) // li carichi tu
     Corso corsoToEntity(CorsoDTO corsoDTO);
 }
+//prova
