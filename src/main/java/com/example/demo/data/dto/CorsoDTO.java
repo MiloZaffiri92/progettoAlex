@@ -16,15 +16,26 @@ public class CorsoDTO {
     private Long id;
     private String nome;
     private String annoAccademico;
-
-    //usato per il form
+    private DocenteDTO docente;
+    private List<DiscenteDTO> discenti;
     private Long docenteId;
     private List<Long> discentiIds;
 
-    //usato per la lista
-    private DocenteDTO docente;
-    private List<DiscenteDTO> discenti;
+    public List<DiscenteDTO> getDiscenti() {
+        return discenti;
+    }
 
+    public void setDiscenti(List<DiscenteDTO> discenti) {
+        this.discenti = discenti;
+    }
+
+    public DocenteDTO getDocente() {
+        return docente;
+    }
+
+    public void setDocente(DocenteDTO docente) {
+        this.docente = docente;
+    }
 
     public String getAnnoAccademico() {
         return annoAccademico;
@@ -65,5 +76,4 @@ public class CorsoDTO {
     public void setDiscentiIds(List<Long> discentiIds) {
         this.discentiIds = discentiIds;
     }
-
 }

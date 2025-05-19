@@ -39,7 +39,8 @@
         <th>Nome</th>
         <th>Anno Accademico</th>
         <th>Docente</th>
-        <th>Discenti</th>
+        <th>Numero Discenti</th>
+        <th>Nome Discenti</th>
         <th>Azioni</th>
     </tr>
     </thead>
@@ -49,18 +50,15 @@
             <td>${corso.id}</td>
             <td>${corso.nome}</td>
             <td>${corso.annoAccademico}</td>
-            <td>
-                <c:if test="${corso.docente != null}">
-                    ${corso.docente.nome} ${corso.docente.cognome}
-                </c:if>
-            </td>
-            <td>
-                <c:if test="${not empty corso.discenti}">
-                    <c:forEach var="discente" items="${corso.discenti}">
-                        ${discente.nome} ${discente.cognome}<br/>
-                    </c:forEach>
-                </c:if>
-            </td>
+            <td>${corso.docente.nomeCompleto}</td>
+            <td>${corso.discenti.size()}</td>
+             <td>
+                 <ul class="mb-0 ps-3">
+                     <c:forEach var="discente" items="${corso.discenti}">
+                                <li>${discente.nomeCompleto}</li>
+                     </c:forEach>
+                 </ul>
+             </td>
             <td>
                 <a class="btn btn-sm btn-secondary" href="<c:url value='/corsi/${corso.id}/edit'/>">Modifica</a>
                 <a class="btn btn-sm btn-danger"

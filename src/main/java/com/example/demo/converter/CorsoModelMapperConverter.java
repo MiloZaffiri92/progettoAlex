@@ -5,11 +5,10 @@ import com.example.demo.data.dto.CorsoDTO;
 import com.example.demo.data.dto.DiscenteDTO;
 import com.example.demo.data.dto.DocenteDTO;
 import com.example.demo.data.entity.Corso;
-
-import com.example.demo.data.entity.Docente;
+import com.example.demo.repository.DiscenteRepository;
 import com.example.demo.repository.DocenteRepository;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.PropertyMap;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.example.demo.data.entity.Discente;
@@ -22,82 +21,92 @@ import java.util.stream.Collectors;
 @Component
 public class CorsoModelMapperConverter {
 
+    @Autowired
+    private DocenteRepository docenteRepository;
+
+    @Autowired
+    private DiscenteRepository discenteRepository;
 
     private final ModelMapper modelMapper;
 
     public CorsoModelMapperConverter(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
+        setupMapper();
+    }
 
-        // NON includere la PropertyMap da Corso a CorsoDTO che causava problemi.
-        // La mappatura da Corso a CorsoDTO sarà gestita interamente nel metodo corsoToDto.
+    private void setupMapper() {
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT)
+                .setFieldMatchingEnabled(true)
+                .setSkipNullEnabled(true);
 
-        // Manteniamo il mapping da DTO a Entity, dato che gli ID sono gestiti nel service
-        this.modelMapper.addMappings(new PropertyMap<CorsoDTO, Corso>() {
-            @Override
-            protected void configure() {
-                // Ignora il mapping diretto di oggetti Docente/Discenti dal DTO all'entità.
-                // Il service si occuperà di recuperare/associare le entità Docente/Discenti
-                // usando docenteId e discentiIds dal DTO.
-                skip(destination.getDocente());
-                skip(destination.getDiscenti());
+        modelMapper.createTypeMap(Corso.class, CorsoDTO.class).setPostConverter(context -> {
+            Corso source = context.getSource();
+            CorsoDTO destination = context.getDestination();
+
+            // Mapping base fields
+            destination.setId(source.getId());
+            destination.setNome(source.getNome());
+            destination.setAnnoAccademico(source.getAnnoAccademico());
+
+            // Mapping docente
+            if (source.getDocente() != null) {
+                destination.setDocenteId(source.getDocente().getId());
+                destination.setDocente(modelMapper.map(source.getDocente(), DocenteDTO.class));
             }
+
+            // Mapping discenti
+            if (source.getDiscenti() != null) {
+                destination.setDiscentiIds(source.getDiscenti().stream()
+                        .map(Discente::getId)
+                        .collect(Collectors.toList()));
+                destination.setDiscenti(source.getDiscenti().stream()
+                        .map(d -> modelMapper.map(d, DiscenteDTO.class))
+                        .collect(Collectors.toList()));
+            }
+
+            return destination;
+        });
+
+        // Mapping inverso da DTO an Entity
+        modelMapper.createTypeMap(CorsoDTO.class, Corso.class).setPostConverter(context -> {
+            CorsoDTO source = context.getSource();
+            Corso destination = context.getDestination();
+
+            // Mapping base fields
+            destination.setId(source.getId());
+            destination.setNome(source.getNome());
+            destination.setAnnoAccademico(source.getAnnoAccademico());
+
+            return destination;
         });
     }
 
-    public CorsoDTO corsoToDto(Corso corso) {
+    public CorsoDTO toDto(Corso corso) {
         if (corso == null) return null;
-
-        // 1. Mappa i campi semplici da Corso a CorsoDTO (id, nome, annoAccademico).
-        // ModelMapper lo fa automaticamente se i nomi dei campi corrispondono.
-        CorsoDTO dto = new CorsoDTO();
-        dto.setId(corso.getId()); // Manuale per chiarezza o se i nomi differiscono
-        dto.setNome(corso.getNome());
-        dto.setAnnoAccademico(corso.getAnnoAccademico());
-        // In alternativa, se i nomi dei campi sono identici e non ci sono conflitti:
-        // CorsoDTO dto = modelMapper.map(corso, CorsoDTO.class);
-        // MA questo potrebbe provare a mappare anche docente/discenti in modi imprevisti
-        // se non configurato attentamente per escluderli o gestirli.
-        // Per maggiore controllo, procediamo con la mappatura esplicita dei campi complessi.
-
-
-        // 2. Gestisci Docente e DocenteId
-        if (corso.getDocente() != null) {
-            Docente docenteEntity = corso.getDocente(); // Assicurati che sia inizializzato!
-            dto.setDocenteId(docenteEntity.getId());
-            // Mappa l'entità Docente a DocenteDTO
-            // Questo funzionerà bene se ModelMapper è configurato per Docente -> DocenteDTO
-            // o se i nomi dei campi corrispondono e non ci sono conversioni complesse.
-            dto.setDocente(modelMapper.map(docenteEntity, DocenteDTO.class));
-        }
-
-        // 3. Gestisci Discenti e DiscentiIds
-        if (corso.getDiscenti() != null && !corso.getDiscenti().isEmpty()) {
-            // Assicurati che la lista e i suoi elementi siano inizializzati!
-            List<Long> discentiIds = corso.getDiscenti().stream()
-                    .map(Discente::getId)
-                    .collect(Collectors.toList());
-            dto.setDiscentiIds(discentiIds);
-
-            // Mappa la lista di entità Discente a una lista di DiscenteDTO
-            List<DiscenteDTO> discenteDtos = corso.getDiscenti().stream()
-                    .map(discenteEntity -> modelMapper.map(discenteEntity, DiscenteDTO.class))
-                    .collect(Collectors.toList());
-            dto.setDiscenti(discenteDtos);
-        } else {
-            dto.setDiscentiIds(Collections.emptyList());
-            dto.setDiscenti(Collections.emptyList());
-        }
-
-        return dto;
+        return modelMapper.map(corso, CorsoDTO.class);
     }
 
-    public Corso corsoToEntity(CorsoDTO dto) {
+    public Corso toEntity(CorsoDTO dto) {
         if (dto == null) return null;
-        // ModelMapper mapperà i campi semplici (id, nome, annoAccademico) e gli ID.
-        // La PropertyMap<CorsoDTO, Corso> gestisce lo skip di docente/discenti.
-        Corso entity = modelMapper.map(dto, Corso.class);
-        // Il service poi userà docenteId e discentiIds per associare le entità corrette.
-        return entity;
-    }
+        Corso corso = modelMapper.map(dto, Corso.class);
 
+        // Gestione del docente
+        if (dto.getDocenteId() != null) {
+            docenteRepository.findById(dto.getDocenteId())
+                    .ifPresent(corso::setDocente);
+        }
+
+        // Gestione dei discenti
+        if (dto.getDiscentiIds() != null && !dto.getDiscentiIds().isEmpty()) {
+            corso.setDiscenti(discenteRepository.findAllById(dto.getDiscentiIds()));
+        } else {
+            corso.setDiscenti(Collections.emptyList());
+        }
+
+        return corso;
+    }
 }
+
+
+
