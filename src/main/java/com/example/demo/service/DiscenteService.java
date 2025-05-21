@@ -1,11 +1,14 @@
 package com.example.demo.service;
 
+import com.example.demo.converter.Converter;
 import com.example.demo.converter.DiscenteConverter;
 import com.example.demo.converter.DiscenteMapper;
 import com.example.demo.data.dto.DiscenteDTO;
+import com.example.demo.data.dto.DocenteDTO;
 import com.example.demo.data.entity.Corso;
 import com.example.demo.data.entity.Discente;
 
+import com.example.demo.data.entity.Docente;
 import com.example.demo.repository.CorsoRepository;
 import com.example.demo.repository.DiscenteRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -47,6 +50,17 @@ public class DiscenteService {
         Discente discente = DiscenteConverter.toEntity(d);
         Discente savedDiscente=discenteRepository.save(discente);
         return DiscenteConverter.toDTO(savedDiscente);
+    }
+
+    public DiscenteDTO updateDiscente(Long id, DiscenteDTO discente) {
+        Discente updateDiscente = discenteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Docente non trovato"));
+        if(discente.getNome() != null) updateDiscente.setNome(discente.getNome());
+        if(discente.getCognome() != null) updateDiscente.setCognome(discente.getCognome());
+        if(discente.getMatricola() != null) updateDiscente.setMatricola(discente.getMatricola());
+        if(discente.getCittaResidenza() != null) updateDiscente.setCittaResidenza(discente.getCittaResidenza());
+        Discente discente1 = discenteRepository.save(updateDiscente);
+        return DiscenteConverter.toDTO(discente1);
     }
 
 

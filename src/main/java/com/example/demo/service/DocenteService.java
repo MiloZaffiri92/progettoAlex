@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,6 +56,17 @@ public class DocenteService {
 
         docenteRepository.delete(docente);
     }
+
+    public DocenteDTO updateDocente(Long id, DocenteDTO docente) {
+        Docente updateDocente = docenteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Docente non trovato"));
+        if(docente.getNome() != null) updateDocente.setNome(docente.getNome());
+        if(docente.getCognome() != null) updateDocente.setCognome(docente.getCognome());
+        Docente saved = docenteRepository.save(updateDocente);
+        return Converter.toDto(saved);
+    }
+
+
 
     // Cerca docenti per nome (parziale o completo)
     public List<DocenteDTO> findByNome(String nome) {

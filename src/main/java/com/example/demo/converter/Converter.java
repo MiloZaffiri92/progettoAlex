@@ -1,10 +1,5 @@
 package com.example.demo.converter;
-
-import com.example.demo.data.dto.CorsoDTO;
-import com.example.demo.data.dto.DiscenteDTO;
 import com.example.demo.data.dto.DocenteDTO;
-import com.example.demo.data.entity.Corso;
-import com.example.demo.data.entity.Discente;
 import com.example.demo.data.entity.Docente;
 
 public class Converter {
