@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.converter.Converter;
-import com.example.demo.converter.DiscenteConverter;
+
 import com.example.demo.converter.DiscenteMapper;
 import com.example.demo.data.dto.DiscenteDTO;
 import com.example.demo.data.dto.DocenteDTO;
@@ -47,9 +47,9 @@ public class DiscenteService {
     }
 
     public DiscenteDTO save(DiscenteDTO d){
-        Discente discente = DiscenteConverter.toEntity(d);
+        Discente discente = discenteMapper.toEntity(d);
         Discente savedDiscente=discenteRepository.save(discente);
-        return DiscenteConverter.toDTO(savedDiscente);
+        return discenteMapper.toDto(savedDiscente);
     }
 
     public DiscenteDTO updateDiscente(Long id, DiscenteDTO discente) {
@@ -60,7 +60,7 @@ public class DiscenteService {
         if(discente.getMatricola() != null) updateDiscente.setMatricola(discente.getMatricola());
         if(discente.getCittaResidenza() != null) updateDiscente.setCittaResidenza(discente.getCittaResidenza());
         Discente discente1 = discenteRepository.save(updateDiscente);
-        return DiscenteConverter.toDTO(discente1);
+        return discenteMapper.toDto(discente1);
     }
 
 

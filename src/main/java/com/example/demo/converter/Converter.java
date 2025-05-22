@@ -10,7 +10,6 @@ public class Converter {
         if (docente == null) return null;
 
         return new DocenteDTO(
-                docente.getId(),
                 docente.getNome(),
                 docente.getCognome()
         );
@@ -21,7 +20,6 @@ public class Converter {
         if (dto == null) return null;
 
         Docente docente = new Docente();
-        docente.setId(dto.getId());
         docente.setNome(dto.getNome());
         docente.setCognome(dto.getCognome());
 

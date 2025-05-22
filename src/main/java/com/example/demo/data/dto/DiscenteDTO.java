@@ -1,7 +1,5 @@
 package com.example.demo.data.dto;
 import lombok.*;
-import java.util.ArrayList;
-import java.util.List;
 
 
 @AllArgsConstructor
@@ -10,7 +8,6 @@ import java.util.List;
 @Setter
 public class DiscenteDTO {
 
-    private Long id;
     private String nome;
     private String cognome;
     private Integer matricola;
@@ -20,15 +17,6 @@ public class DiscenteDTO {
     public String getNomeCompleto() {
         return this.nome + " " + this.cognome;
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
 
     public String getCittaResidenza() {
         return cittaResidenza;

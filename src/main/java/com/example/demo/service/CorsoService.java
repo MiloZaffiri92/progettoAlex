@@ -3,6 +3,8 @@ package com.example.demo.service;
 import com.example.demo.converter.CorsoMapper;
 import com.example.demo.data.dto.CorsoDTO;
 import com.example.demo.data.entity.Corso;
+import com.example.demo.data.entity.Discente;
+import com.example.demo.data.entity.Docente;
 import com.example.demo.repository.CorsoRepository;
 import com.example.demo.repository.DiscenteRepository;
 import com.example.demo.repository.DocenteRepository;
@@ -18,11 +20,10 @@ import java.util.stream.Collectors;
 public class CorsoService {
 
     @Autowired
-    DocenteRepository docenteRepository;
+    private DocenteRepository docenteRepository;
 
     @Autowired
-    DiscenteRepository discenteRepository;
-
+    private DiscenteRepository discenteRepository;
 
     @Autowired
     private CorsoRepository corsoRepository;
@@ -44,15 +45,34 @@ public class CorsoService {
     }
 
     @EntityGraph(attributePaths = {"docente", "discente"})
-    public CorsoDTO save(CorsoDTO c){
-        Corso corso = corsoMapper.corsoToEntity(c);
+    public CorsoDTO save(CorsoDTO corsoDTO){
+        Corso corso = corsoMapper.corsoToEntity(corsoDTO);
 
-        if (c.getDocenteId() != null) {
-            corso.setDocente(docenteRepository.findById(c.getDocenteId()).orElse(null));
+        corso.setNome(corsoDTO.getNome());
+        corso.setAnnoAccademico(corsoDTO.getAnnoAccademico());
+
+        if (corsoDTO.getDocente() != null) {
+            String nomeDocente = corsoDTO.getDocente().getNome();
+            String cognomeDocente = corsoDTO.getDocente().getCognome();
+            Optional<Docente> docente = docenteRepository.findByNomeAndCognome(nomeDocente, cognomeDocente);
+            if (docente.isPresent()) {
+                corso.setDocente(docente.get());
+            } else {
+                throw new RuntimeException("Docente non trovato");
+            }
         }
 
-        if (c.getDiscentiIds() != null && !c.getDiscentiIds().isEmpty()) {
-            corso.setDiscenti(discenteRepository.findAllById(c.getDiscentiIds()));
+        //gestiamo i discenti
+        if (corsoDTO.getDiscenti() != null && !corsoDTO.getDiscenti().isEmpty()) {
+            List<Discente> discenti = corsoDTO.getDiscenti().stream()
+                    .map(discenteDTO -> {
+                        return discenteRepository.findByNomeAndCognome(
+                                        discenteDTO.getNome(),
+                                        discenteDTO.getCognome())
+                                .orElseThrow(() -> new RuntimeException("Discente non trovato"));
+                    })
+                    .collect(Collectors.toList());
+            corso.setDiscenti(discenti);
         } else {
             corso.setDiscenti(List.of());
         }
@@ -65,11 +85,34 @@ public class CorsoService {
         corsoRepository.deleteById(id);
     }
 
-    public List<CorsoDTO> findByNome(String nome) {
-        return corsoRepository.findByNomeContainingIgnoreCase(nome).stream()
-                .map(corsoMapper::corsoToDto)
-                .collect(Collectors.toList());
-    }
 
+    public CorsoDTO updateCorso(Long id, CorsoDTO corso) {
+        Corso updateCorso = corsoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Corso non trovato"));
+
+        if(corso.getNome() != null) updateCorso.setNome(corso.getNome());
+        if(corso.getAnnoAccademico() != null) updateCorso.setAnnoAccademico(corso.getAnnoAccademico());
+
+        if(corso.getDocente() != null) {
+            Docente docente = docenteRepository.findByNomeAndCognome(
+                    corso.getDocente().getNome(),
+                    corso.getDocente().getCognome()
+            ).orElseThrow(() -> new RuntimeException("Docente non trovato"));
+            updateCorso.setDocente(docente);
+        }
+
+        if(corso.getDiscenti() != null) {
+            List<Discente> discenti = corso.getDiscenti().stream()
+                    .map(discenteDTO -> discenteRepository.findByNomeAndCognome(
+                            discenteDTO.getNome(),
+                            discenteDTO.getCognome()
+                    ).orElseThrow(() -> new RuntimeException("Discente non trovato")))
+                    .collect(Collectors.toList());
+            updateCorso.setDiscenti(discenti);
+        }
+
+        Corso saved = corsoRepository.save(updateCorso);
+        return corsoMapper.corsoToDto(saved);
+    }
 
 }
