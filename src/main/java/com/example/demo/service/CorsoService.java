@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,16 +52,23 @@ public class CorsoService {
         corso.setNome(corsoDTO.getNome());
         corso.setAnnoAccademico(corsoDTO.getAnnoAccademico());
 
+        //Gestiamo Docenti
         if (corsoDTO.getDocente() != null) {
             String nomeDocente = corsoDTO.getDocente().getNome();
             String cognomeDocente = corsoDTO.getDocente().getCognome();
-            Optional<Docente> docente = docenteRepository.findByNomeAndCognome(nomeDocente, cognomeDocente);
-            if (docente.isPresent()) {
-                corso.setDocente(docente.get());
-            } else {
-                throw new RuntimeException("Docente non trovato");
-            }
+            Docente docente = docenteRepository.findByNomeAndCognome(nomeDocente, cognomeDocente)
+                    .orElseGet(() -> {
+                        Docente nuovoDocente = new Docente();
+                        nuovoDocente.setNome(nomeDocente);
+                        nuovoDocente.setCognome(cognomeDocente);
+                        // Genera una email temporanea
+                        nuovoDocente.setEmail(nomeDocente.toLowerCase() + "." +
+                                cognomeDocente.toLowerCase() + "@example.com");
+                        return docenteRepository.save(nuovoDocente);
+                    });
+            corso.setDocente(docente);
         }
+
 
         //gestiamo i discenti
         if (corsoDTO.getDiscenti() != null && !corsoDTO.getDiscenti().isEmpty()) {
@@ -69,14 +77,20 @@ public class CorsoService {
                         return discenteRepository.findByNomeAndCognome(
                                         discenteDTO.getNome(),
                                         discenteDTO.getCognome())
-                                .orElseThrow(() -> new RuntimeException("Discente non trovato"));
+                                .orElseGet(() -> {
+                                    Discente nuovoDiscente = new Discente();
+                                    nuovoDiscente.setNome(discenteDTO.getNome());
+                                    nuovoDiscente.setCognome(discenteDTO.getCognome());
+                                    nuovoDiscente.setMatricola(
+                                            new Random().nextInt(900000) + 100000);
+                                    return discenteRepository.save(nuovoDiscente);
+                                });
                     })
                     .collect(Collectors.toList());
             corso.setDiscenti(discenti);
         } else {
             corso.setDiscenti(List.of());
         }
-
         Corso savedCorso = corsoRepository.save(corso);
         return corsoMapper.corsoToDto(savedCorso);
     }
@@ -93,20 +107,40 @@ public class CorsoService {
         if(corso.getNome() != null) updateCorso.setNome(corso.getNome());
         if(corso.getAnnoAccademico() != null) updateCorso.setAnnoAccademico(corso.getAnnoAccademico());
 
+        // Gestione docente
         if(corso.getDocente() != null) {
-            Docente docente = docenteRepository.findByNomeAndCognome(
-                    corso.getDocente().getNome(),
-                    corso.getDocente().getCognome()
-            ).orElseThrow(() -> new RuntimeException("Docente non trovato"));
+            String nomeDocente = corso.getDocente().getNome();
+            String cognomeDocente = corso.getDocente().getCognome();
+            Docente docente = docenteRepository.findByNomeAndCognome(nomeDocente, cognomeDocente)
+                    .orElseGet(() -> {
+                        Docente nuovoDocente = new Docente();
+                        nuovoDocente.setNome(nomeDocente);
+                        nuovoDocente.setCognome(cognomeDocente);
+                        // Genera una email temporanea
+                        nuovoDocente.setEmail(nomeDocente.toLowerCase() + "." +
+                                cognomeDocente.toLowerCase() + "@example.com");
+                        return docenteRepository.save(nuovoDocente);
+                    });
             updateCorso.setDocente(docente);
         }
 
+        // Gestione discenti
         if(corso.getDiscenti() != null) {
             List<Discente> discenti = corso.getDiscenti().stream()
-                    .map(discenteDTO -> discenteRepository.findByNomeAndCognome(
-                            discenteDTO.getNome(),
-                            discenteDTO.getCognome()
-                    ).orElseThrow(() -> new RuntimeException("Discente non trovato")))
+                    .map(discenteDTO -> {
+                        return discenteRepository.findByNomeAndCognome(
+                                        discenteDTO.getNome(),
+                                        discenteDTO.getCognome())
+                                .orElseGet(() -> {
+                                    Discente nuovoDiscente = new Discente();
+                                    nuovoDiscente.setNome(discenteDTO.getNome());
+                                    nuovoDiscente.setCognome(discenteDTO.getCognome());
+                                    // Genera una matricola casuale
+                                    nuovoDiscente.setMatricola(
+                                            new Random().nextInt(900000) + 100000);
+                                    return discenteRepository.save(nuovoDiscente);
+                                });
+                    })
                     .collect(Collectors.toList());
             updateCorso.setDiscenti(discenti);
         }
@@ -114,5 +148,6 @@ public class CorsoService {
         Corso saved = corsoRepository.save(updateCorso);
         return corsoMapper.corsoToDto(saved);
     }
+
 
 }
