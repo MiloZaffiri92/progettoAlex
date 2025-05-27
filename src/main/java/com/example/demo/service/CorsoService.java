@@ -39,11 +39,11 @@ public class CorsoService {
                 .collect(Collectors.toList());
     }
 
-    public CorsoDTO findById(Long id) {
-        Corso corso = corsoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Corso non trovato"));
-        return corsoMapper.corsoToDto(corso);
-    }
+//    public CorsoDTO findById(Long id) {
+//        Corso corso = corsoRepository.findById(id)
+//                .orElseThrow(() -> new RuntimeException("Corso non trovato"));
+//        return corsoMapper.corsoToDto(corso);
+//    }
 
     @EntityGraph(attributePaths = {"docente", "discente"})
     public CorsoDTO save(CorsoDTO corsoDTO){
