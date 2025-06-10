@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.data.dto.DiscenteDTO;
+import com.example.demo.data.dto.DocenteDTO;
 import com.example.demo.data.entity.Discente;
 import com.example.demo.service.DiscenteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +31,14 @@ public class DiscenteController {
         return discenteService.save(discente);
     }
 
+    @GetMapping("/findById")
+    public DiscenteDTO findById(@RequestParam Long id) {
+        return discenteService.findById(id);
+    }
+
 
     // Aggiorna un Discente esistente
-    @PutMapping("/{id}")
+    @PutMapping("/modifica/{id}")
     public ResponseEntity<DiscenteDTO> update(@PathVariable Long id,
                                  @RequestBody DiscenteDTO discente) {
         DiscenteDTO updateDiscente = discenteService.updateDiscente(id, discente);
@@ -56,7 +62,13 @@ public class DiscenteController {
         }
 
         return ResponseEntity.ok(risultatiRicerca);
-
-
     }
+
+    @GetMapping("/findByNomeAndCognome")
+    public Long findIdByNomeAndCognome(@RequestParam String nome, @RequestParam String cognome) {
+        return discenteService.findIdByNomeAndCognome(nome, cognome);
+    }
+
+
+
 }

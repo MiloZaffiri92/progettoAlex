@@ -16,4 +16,7 @@ public interface DocenteRepository extends JpaRepository<Docente, Long> {
     List<Docente> cercaPerNome(@Param("nome") String nome);
 
     Optional<Docente> findByNomeAndCognome(String nomeDocente, String cognomeDocente);
+
+    @Query("SELECT d.id FROM Docente d WHERE d.nome=:nome AND d.cognome=:cognome")
+    Long findIdByNomeAndCognome(String nome, String cognome);
 }

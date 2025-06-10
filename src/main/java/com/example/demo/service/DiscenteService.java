@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,12 +39,6 @@ public class DiscenteService {
                 .collect(Collectors.toList());
         System.out.println("Numero di discenti recuperati: " + discenti.size());  // Debug
         return discenti;
-    }
-
-    public DiscenteDTO get(Long id) {
-        Discente discente = discenteRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Discente non trovato con id: " + id));
-        return discenteMapper.toDto(discente);
     }
 
     public DiscenteDTO save(DiscenteDTO d){
@@ -87,4 +82,17 @@ public class DiscenteService {
                 .map(discenteMapper::toDto)
                 .collect(Collectors.toList());
     }
+
+    public Long findIdByNomeAndCognome(String nome, String cognome) {
+        return discenteRepository.findIdByNomeAndCognome(nome, cognome);
+    }
+
+    public DiscenteDTO findById(Long id) {
+        return discenteRepository.findById(id)
+                .map(discente -> discenteMapper.toDto(discente))
+                .orElse(null);
+    }
+
+
+
 }

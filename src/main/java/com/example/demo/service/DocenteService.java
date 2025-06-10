@@ -73,4 +73,15 @@ public class DocenteService {
                 .map(Converter::toDto)
                 .collect(Collectors.toList());
     }
+
+    public DocenteDTO findById(Long id) {
+        Docente docente = docenteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Docente non trovato"));
+        return Converter.toDto(docente);
+    }
+
+    public Long findIdByNomeAndCognome(String nome, String cognome) {
+        return docenteRepository.findIdByNomeAndCognome(nome, cognome);
+    }
+
 }

@@ -30,6 +30,14 @@ public class DocenteController {
         return docenteService.findAll();
     }
 
+    // FIND BY ID
+    @GetMapping("/{id}")
+    public ResponseEntity<DocenteDTO> getById(@PathVariable Long id) {
+        DocenteDTO docente = docenteService.findById(id);
+        return ResponseEntity.ok(docente);
+    }
+
+
 
     // SALVA NUOVO
     @PostMapping
@@ -60,6 +68,11 @@ public class DocenteController {
         List<DocenteDTO> docenti = docenteService.findByNome(nome);
 
         return ResponseEntity.ok(docenti);
+    }
+
+    @GetMapping("/findByNomeAndCognome")
+    public Long findIdByNomeAndCognome(@RequestParam String nome, @RequestParam String cognome) {
+        return docenteService.findIdByNomeAndCognome(nome, cognome);
     }
 }
 
